@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard — StockSense AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/main.css"/>
+<style>
+  /* Extra dashboard-only styles */
+  .db-badge {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em;
+    padding: 0.2rem 0.5rem; border-radius: 2px; text-transform: uppercase;
+  }
+  .db-badge.live { background: rgba(61,255,192,0.12); color: var(--ok); }
+  .db-badge.demo { background: rgba(232,252,74,0.12); color: var(--accent); }
+  .db-tabs { display: flex; gap: 0; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 1.5rem; }
+  .db-tab {
+    font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0.75rem 1.2rem; background: none; border: none; color: var(--muted); cursor: none;
+    border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s;
+  }
+  .db-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .db-tab:hover { color: var(--paper); }
+  .search-bar {
+    display: flex; gap: 0.5rem; margin-bottom: 1.2rem;
+  }
+  .search-bar input {
+    flex: 1; background: var(--mid); border: 1px solid rgba(255,255,255,0.08);
+    color: var(--paper); padding: 0.6rem 1rem; font-family: var(--mono); font-size: 0.78rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  .search-bar input:focus { border-color: var(--accent); }
+  .search-bar input::placeholder { color: var(--muted); }
+  .filter-btn {
+    background: var(--mid); border: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted); padding: 0.6rem 1rem; font-family: var(--mono); font-size: 0.72rem;
+    cursor: none; text-transform: uppercase; letter-spacing: 0.07em; transition: color 0.2s, border-color 0.2s;
+  }
+  .filter-btn.active, .filter-btn:hover { color: var(--paper); border-color: rgba(255,255,255,0.2); }
+  .sku-table-wrap { overflow-x: auto; }
+  .sku-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.75rem; }
+  .sku-table th {
+    color: var(--muted); text-align: left; padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid rgba(255,255,255,0.07); font-weight: 400;
+    letter-spacing: 0.08em; text-transform: uppercase; cursor: none;
+    white-space: nowrap;
+  }
+  .sku-table th:hover { color: var(--paper); }
+  .sku-table td { padding: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--paper); }
+  .sku-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .sku-table tr:last-child td { border-bottom: none; }
+  .order-btn {
+    background: var(--accent); border: none; color: var(--ink);
+    padding: 0.3rem 0.7rem; font-family: var(--mono); font-size: 0.65rem;
+    text-transform: uppercase; letter-spacing: 0.06em; cursor: none;
+    transition: opacity 0.2s;
+  }
+  .order-btn:hover { opacity: 0.8; }
+  .order-btn:disabled { background: rgba(255,255,255,0.1); color: var(--muted); cursor: not-allowed; }
+  .trend-spark { display: inline-flex; align-items: flex-end; gap: 2px; height: 20px; vertical-align: middle; }
+  .trend-spark span { display: inline-block; width: 3px; border-radius: 1px 1px 0 0; }
+  .order-chip {
+    font-family: var(--mono); font-size: 0.65rem; padding: 0.18rem 0.45rem;
+    border-radius: 2px; text-transform: uppercase; letter-spacing: 0.06em; display: inline-block;
+  }
+  .chip-ok      { background: rgba(61,255,192,0.12);  color: var(--ok); }
+  .chip-warn    { background: rgba(255,204,0,0.12);   color: #ffcc00; }
+  .chip-danger  { background: rgba(255,79,79,0.12);   color: var(--danger); }
+  .chip-overstock { background: rgba(102,153,255,0.12); color: #6699ff; }
+  .pagination { display: flex; gap: 0.4rem; margin-top: 1.2rem; justify-content: flex-end; }
+  .pg-btn {
+    font-family: var(--mono); font-size: 0.72rem; padding: 0.4rem 0.8rem;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted); cursor: none; transition: all 0.2s;
+  }
+  .pg-btn.active, .pg-btn:hover { color: var(--paper); border-color: rgba(255,255,255,0.2); }
+  .pg-btn.active { background: rgba(232,252,74,0.1); color: var(--accent); border-color: rgba(232,252,74,0.3); }
+  .forecast-chart { width: 100%; height: 200px; position: relative; }
+  .canvas-wrap canvas { width: 100% !important; }
+  .alert-dismiss { background: none; border: none; color: var(--muted); cursor: none; font-size: 1rem; transition: color 0.2s; margin-left: auto; }
+  .alert-dismiss:hover { color: var(--danger); }
+  .sidebar-store {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    padding: 0.8rem; margin-bottom: 1.5rem; font-family: var(--mono); font-size: 0.7rem;
+  }
+  .sidebar-store strong { display: block; color: var(--paper); margin-bottom: 0.2rem; font-size: 0.78rem; }
+  .sidebar-store span { color: var(--ok); }
+  .db-breadcrumb { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); margin-bottom: 0.5rem; }
+  .db-breadcrumb a { color: var(--muted); text-decoration: none; cursor: none; }
+  .db-breadcrumb a:hover { color: var(--accent); }
+  .forecast-legend { display: flex; gap: 1.2rem; font-family: var(--mono); font-size: 0.65rem; color: var(--muted); margin-bottom: 0.8rem; }
+  .fl-dot { width: 8px; height: 8px; border-radius: 1px; display: inline-block; margin-right: 4px; }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<div class="db-layout">
+  <!-- SIDEBAR -->
+  <aside class="db-sidebar">
+    <a href="index.html" class="logo db-sidebar">Stock<span>Sense</span></a>
+    <div class="sidebar-store">
+      <strong>ActiveGear Portland</strong>
+      <span>● Connected</span>
+    </div>
+    <ul class="db-nav">
+      <li><a href="#overview" class="active" onclick="showTab('overview',this)">📊 Overview</a></li>
+      <li><a href="#inventory" onclick="showTab('inventory',this)">📦 Inventory</a></li>
+      <li><a href="#forecasts" onclick="showTab('forecasts',this)">🔮 Forecasts</a></li>
+      <li><a href="#alerts"    onclick="showTab('alerts',this)">🔔 Alerts <span id="alertCount" style="background:var(--danger);color:#fff;border-radius:99px;padding:0 5px;font-size:0.6rem;margin-left:4px;">3</span></a></li>
+      <li><a href="#reports"   onclick="showTab('reports',this)">📬 Reports</a></li>
+    </ul>
+    <div style="margin-top:auto;padding-top:2rem;">
+      <a href="index.html" style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-decoration:none;cursor:none;display:block;margin-bottom:0.5rem;">← Back to site</a>
+      <button class="btn-primary" style="width:100%;font-size:0.72rem;" onclick="openModal('upgradeModal')">Upgrade plan</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="db-main">
+
+    <!-- OVERVIEW TAB -->
+    <div id="tab-overview">
+      <div class="db-breadcrumb">StockSense / <span style="color:var(--paper)">Overview</span></div>
+      <div class="db-header">
+        <div>
+          <div class="db-title">Good morning, Jamie 👋</div>
+          <div class="db-date" id="dbDate"></div>
+        </div>
+        <div style="display:flex;gap:0.6rem;align-items:center;">
+          <span class="db-badge demo">Demo data</span>
+          <button class="btn-ghost" style="padding:0.5rem 1rem;font-size:0.72rem;" onclick="refreshData()">↻ Refresh</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total SKUs</div>
+          <div class="kpi-val">248</div>
+          <div class="kpi-delta kpi-up">↑ 12 added this month</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Stockout Risk</div>
+          <div class="kpi-val" style="color:var(--danger)">7</div>
+          <div class="kpi-delta kpi-down">↑ 3 from last week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Forecast Accuracy</div>
+          <div class="kpi-val">96.1<span style="font-size:1.2rem">%</span></div>
+          <div class="kpi-delta kpi-up">↑ 1.9% vs last month</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Savings This Month</div>
+          <div class="kpi-val">$<span id="savingsCounter">0</span></div>
+          <div class="kpi-delta kpi-up">↑ 22% vs last month</div>
+        </div>
+      </div>
+
+      <div class="db-grid2">
+        <!-- Top items needing action -->
+        <div class="db-card">
+          <div class="db-card-title">
+            <span>Action required</span>
+            <span style="color:var(--danger);font-size:0.68rem;">7 items</span>
+          </div>
+          <table class="db-table">
+            <thead><tr><th>Product</th><th>Stock</th><th>Status</th><th></th></tr></thead>
+            <tbody id="actionTable"></tbody>
+          </table>
+        </div>
+
+        <!-- Top performers -->
+        <div class="db-card">
+          <div class="db-card-title">
+            <span>Top sellers · 7 days</span>
+          </div>
+          <div id="topSellers"></div>
+        </div>
+      </div>
+
+      <div class="db-card">
+        <div class="db-card-title">
+          <span>Forecast overview — next 14 days</span>
+          <div class="forecast-legend">
+            <span><span class="fl-dot" style="background:rgba(102,153,255,0.7)"></span>Actual</span>
+            <span><span class="fl-dot" style="background:rgba(232,252,74,0.7)"></span>Forecast</span>
+          </div>
+        </div>
+        <div class="canvas-wrap"><canvas id="forecastCanvas" height="200"></canvas></div>
+      </div>
+    </div>
+
+    <!-- INVENTORY TAB -->
+    <div id="tab-inventory" style="display:none;">
+      <div class="db-breadcrumb">StockSense / <span style="color:var(--paper)">Inventory</span></div>
+      <div class="db-header">
+        <div class="db-title">Inventory</div>
+        <button class="btn-primary" style="padding:0.6rem 1.2rem;font-size:0.75rem;" onclick="showToast('Export started — CSV ready in 10s','success')">Export CSV</button>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="skuSearch" placeholder="Search SKUs, product names…" oninput="filterSKUs()"/>
+        <button class="filter-btn active" id="filterAll" onclick="setFilter('all',this)">All</button>
+        <button class="filter-btn" id="filterLow" onclick="setFilter('low',this)">Low stock</button>
+        <button class="filter-btn" id="filterOrder" onclick="setFilter('order',this)">Order now</button>
+        <button class="filter-btn" id="filterOver" onclick="setFilter('over',this)">Overstock</button>
+      </div>
+      <div class="sku-table-wrap">
+        <table class="sku-table">
+          <thead><tr>
+            <th onclick="sortTable('name')">Product ↕</th>
+            <th onclick="sortTable('sku')">SKU ↕</th>
+            <th onclick="sortTable('stock')">Stock ↕</th>
+            <th>7d Trend</th>
+            <th onclick="sortTable('forecast')">14d Forecast ↕</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr></thead>
+          <tbody id="skuTableBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+    <!-- FORECASTS TAB -->
+    <div id="tab-forecasts" style="display:none;">
+      <div class="db-breadcrumb">StockSense / <span style="color:var(--paper)">Forecasts</span></div>
+      <div class="db-header">
+        <div class="db-title">Demand Forecasts</div>
+        <div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);">Updated 2h ago · next update in 10h</div>
+      </div>
+      <div class="db-grid2">
+        <div class="db-card">
+          <div class="db-card-title">Signal strength this week</div>
+          <div id="signalStrength"></div>
+        </div>
+        <div class="db-card">
+          <div class="db-card-title">Upcoming demand drivers</div>
+          <div id="demandDrivers"></div>
+        </div>
+      </div>
+      <div class="db-card" style="margin-top:1rem;">
+        <div class="db-card-title">
+          <span>Product forecast drill-down</span>
+          <select id="forecastSku" onchange="updateForecastChart()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--paper);padding:0.3rem 0.6rem;font-family:var(--mono);font-size:0.72rem;cursor:none;outline:none;">
+          </select>
+        </div>
+        <div class="canvas-wrap"><canvas id="drillCanvas" height="200"></canvas></div>
+        <div id="drillInsight" style="margin-top:1rem;padding:0.9rem;background:rgba(232,252,74,0.04);border:1px solid rgba(232,252,74,0.12);font-family:var(--mono);font-size:0.72rem;color:#ccc;"></div>
+      </div>
+    </div>
+
+    <!-- ALERTS TAB -->
+    <div id="tab-alerts" style="display:none;">
+      <div class="db-breadcrumb">StockSense / <span style="color:var(--paper)">Alerts</span></div>
+      <div class="db-header">
+        <div class="db-title">Alerts</div>
+        <button class="btn-ghost" style="padding:0.5rem 1rem;font-size:0.72rem;" onclick="dismissAll()">Dismiss all</button>
+      </div>
+      <div id="alertsList"></div>
+    </div>
+
+    <!-- REPORTS TAB -->
+    <div id="tab-reports" style="display:none;">
+      <div class="db-breadcrumb">StockSense / <span style="color:var(--paper)">Reports</span></div>
+      <div class="db-header"><div class="db-title">Weekly Reports</div></div>
+      <div id="reportsList"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- UPGRADE MODAL -->
+<div class="modal-overlay" id="upgradeModal" onclick="closeModalOutside(event,'upgradeModal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('upgradeModal')">✕</button>
+    <div class="modal-eyebrow">Upgrade Plan</div>
+    <h2 class="modal-title">Unlock more power</h2>
+    <p class="modal-sub">You're on the Starter plan. Upgrade to Growth for daily reports, event signals, and multi-channel sync.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,0.06);margin-bottom:1.5rem;">
+      <div style="background:var(--ink);padding:1.2rem;">
+        <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:0.5rem;">Current · Starter</div>
+        <div style="font-family:var(--display);font-size:2rem;font-weight:800;margin-bottom:0.8rem;">$49<span style="font-size:1rem;font-weight:400;color:var(--muted)">/mo</span></div>
+        <ul style="list-style:none;font-size:0.8rem;color:var(--muted);display:flex;flex-direction:column;gap:0.4rem;">
+          <li>500 SKUs</li><li>Weekly reports</li><li>Weather signals</li>
+        </ul>
+      </div>
+      <div style="background:var(--mid);padding:1.2rem;border:1px solid rgba(232,252,74,0.3);">
+        <div style="font-family:var(--mono);font-size:0.68rem;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;">Growth · Recommended</div>
+        <div style="font-family:var(--display);font-size:2rem;font-weight:800;margin-bottom:0.8rem;">$149<span style="font-size:1rem;font-weight:400;color:var(--muted)">/mo</span></div>
+        <ul style="list-style:none;font-size:0.8rem;color:var(--paper);display:flex;flex-direction:column;gap:0.4rem;">
+          <li>5,000 SKUs</li><li>Daily reports</li><li>All signals</li>
+        </ul>
+      </div>
+    </div>
+    <button class="btn-primary" style="width:100%" onclick="closeModal('upgradeModal');openModal('trialModal','Growth')">Upgrade to Growth →</button>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="successModal" onclick="closeModalOutside(event,'successModal')">
+  <div class="modal" style="text-align:center;">
+    <div style="font-size:3rem;margin-bottom:1rem;">🎉</div>
+    <h2 class="modal-title" id="successTitle">Done!</h2>
+    <p class="modal-sub" id="successMsg">Your order has been placed.</p>
+    <button class="btn-primary" style="margin-top:1.5rem" onclick="closeModal('successModal')">Got it</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="js/main.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

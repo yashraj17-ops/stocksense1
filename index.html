@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>StockSense AI — Never Run Out. Never Overstock.</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/main.css"/>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- MOBILE MENU OVERLAY -->
+<div class="mobile-overlay" id="mobileOverlay">
+  <button class="mobile-close" id="mobileClose">✕</button>
+  <ul class="mobile-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#signals">Signals</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="dashboard.html">Demo Dashboard</a></li>
+  </ul>
+  <button class="btn-primary" onclick="openModal('trialModal')">Start Free Trial</button>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="logo"><a href="index.html">Stock<span>Sense</span></a></div>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#signals">Signals</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="dashboard.html">Live Demo</a></li>
+  </ul>
+  <button class="nav-cta" onclick="openModal('trialModal')">Start Free Trial</button>
+  <button class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">AI-powered inventory intelligence</div>
+    <h1>
+      Never run out.<br>
+      <em>Never overstock.</em>
+      <span class="line2">Again.</span>
+    </h1>
+    <p class="hero-sub">
+      StockSense learns your sales patterns, watches the weather, tracks local events,
+      and tells you exactly what to order — before you run out.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="openModal('trialModal')">Start 30-day free trial</button>
+      <a href="#how" class="btn-ghost">See how it works →</a>
+    </div>
+    <div class="hero-trust">
+      <span>Trusted by</span>
+      <strong>400+</strong>
+      <span>retailers</span>
+      <span class="trust-sep">·</span>
+      <span>No credit card</span>
+      <span class="trust-sep">·</span>
+      <span>3-min setup</span>
+    </div>
+  </div>
+
+  <div class="hero-widget">
+    <div class="widget-header">
+      <span>Live inventory feed</span>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <div class="widget-dot"></div>
+        <span style="color:var(--ok);font-size:0.65rem;">LIVE</span>
+      </div>
+    </div>
+
+    <div class="product-row" id="pr1">
+      <span class="product-name">Running Shoes S10</span>
+      <div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-fill" style="width:72%;background:var(--ok)"></div></div></div>
+      <span class="stock-num">142 u</span>
+      <span class="status-tag tag-ok">OK</span>
+    </div>
+    <div class="product-row" id="pr2">
+      <span class="product-name">Yoga Mat Premium</span>
+      <div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-fill" style="width:28%;background:#ffcc00"></div></div></div>
+      <span class="stock-num">23 u</span>
+      <span class="status-tag tag-warn">Low</span>
+    </div>
+    <div class="product-row" id="pr3">
+      <span class="product-name">Water Bottle 1L</span>
+      <div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-fill" style="width:8%;background:var(--danger)"></div></div></div>
+      <span class="stock-num">7 u</span>
+      <span class="status-tag tag-danger">Order</span>
+    </div>
+    <div class="product-row" id="pr4">
+      <span class="product-name">Resistance Bands</span>
+      <div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-fill" style="width:91%;background:var(--ok)"></div></div></div>
+      <span class="stock-num">310 u</span>
+      <span class="status-tag tag-ok">OK</span>
+    </div>
+
+    <div class="widget-footer">
+      ⚡ AI suggests ordering 48 units of Water Bottle 1L by Friday
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="ticker">
+    <span class="ticker-item">Demand forecast <span class="t-val t-up">↑ 23%</span> next week</span>
+    <span class="ticker-item">Weather: Rain expected Thu–Sat · Umbrellas <span class="t-val t-up">↑ 2.4×</span></span>
+    <span class="ticker-item">Local event: Marathon Sunday · Sports drinks <span class="t-val t-up">↑ 3.1×</span></span>
+    <span class="ticker-item">Avg accuracy across customers <span class="t-val">94.2%</span></span>
+    <span class="ticker-item">Stock savings last month <span class="t-val t-up">$12,400</span></span>
+    <span class="ticker-item">Stockout incidents <span class="t-val t-dn">↓ 87%</span></span>
+    <span class="ticker-item">Demand forecast <span class="t-val t-up">↑ 23%</span> next week</span>
+    <span class="ticker-item">Weather: Rain expected Thu–Sat · Umbrellas <span class="t-val t-up">↑ 2.4×</span></span>
+    <span class="ticker-item">Local event: Marathon Sunday · Sports drinks <span class="t-val t-up">↑ 3.1×</span></span>
+    <span class="ticker-item">Avg accuracy across customers <span class="t-val">94.2%</span></span>
+    <span class="ticker-item">Stock savings last month <span class="t-val t-up">$12,400</span></span>
+    <span class="ticker-item">Stockout incidents <span class="t-val t-dn">↓ 87%</span></span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stat-cell fade-up">
+    <div class="stat-num counter" data-target="175" data-prefix="$" data-suffix="T">$0T</div>
+    <div class="stat-label">Lost annually to bad inventory globally</div>
+  </div>
+  <div class="stat-cell fade-up" style="transition-delay:0.1s">
+    <div class="stat-num counter" data-target="94" data-suffix="%">0%</div>
+    <div class="stat-label">Forecast accuracy on average</div>
+  </div>
+  <div class="stat-cell fade-up" style="transition-delay:0.2s">
+    <div class="stat-num counter" data-target="87" data-suffix="%">0%</div>
+    <div class="stat-label">Reduction in stockout incidents</div>
+  </div>
+  <div class="stat-cell fade-up" style="transition-delay:0.3s">
+    <div class="stat-num">3<span>min</span></div>
+    <div class="stat-label">Setup time — plug in, that's it</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-label">Process</div>
+  <h2 class="section-title fade-up">How StockSense works</h2>
+  <p class="section-sub fade-up">Three steps. No data scientists required.</p>
+
+  <div class="steps fade-up">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-icon">🔌</div>
+      <h3>Connect your store</h3>
+      <p>Plug into Shopify, Square, or WooCommerce in under 3 minutes. We pull your full sales history automatically.</p>
+      <div class="step-tag">→ One-click OAuth</div>
+      <div class="step-integrations">
+        <span class="integration-badge">Shopify</span>
+        <span class="integration-badge">Square</span>
+        <span class="integration-badge">WooCommerce</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-icon">🧠</div>
+      <h3>AI learns your patterns</h3>
+      <p>Our ML model analyzes seasonality, weekly cycles, local weather, and nearby events to build a demand model unique to your store.</p>
+      <div class="step-tag">→ Prophet + LSTM models</div>
+      <div class="ai-pulse-wrap"><div class="ai-pulse"></div><span>Training on your data…</span></div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-icon">📬</div>
+      <h3>Get clear orders</h3>
+      <p>Every Monday, receive a plain-English report: "Order X units of Y by Thursday." No dashboards required — unless you want them.</p>
+      <div class="step-tag">→ Email + dashboard</div>
+      <a href="dashboard.html" class="step-link">View demo dashboard →</a>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="testimonials-section">
+  <div class="section-label">Testimonials</div>
+  <h2 class="section-title fade-up">Retailers love it</h2>
+  <div class="testimonials-grid">
+    <div class="testimonial fade-up">
+      <div class="testimonial-stars">★★★★★</div>
+      <p>"StockSense saved us $8,000 last quarter. We used to run out of our best sellers every weekend — not anymore."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background:#3dffc0;">JM</div>
+        <div>
+          <strong>Jamie Moss</strong>
+          <span>Owner, ActiveGear Portland</span>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial fade-up" style="transition-delay:0.1s">
+      <div class="testimonial-stars">★★★★★</div>
+      <p>"The weather signal feature blew my mind. It predicted a heatwave and told me to stock up on fans 4 days before it hit."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background:#6699ff;">SR</div>
+        <div>
+          <strong>Sara Rodriguez</strong>
+          <span>Manager, HomeBase Supplies</span>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial fade-up" style="transition-delay:0.2s">
+      <div class="testimonial-stars">★★★★★</div>
+      <p>"Setup took 4 minutes. First week I got my report and it was dead on. I've been using it for 8 months and won't go back."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background:#e8fc4a;color:#0b0d14;">TK</div>
+        <div>
+          <strong>Tom Keller</strong>
+          <span>Co-founder, BrewShop Denver</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNALS -->
+<section class="signals-section" id="signals">
+  <div class="signals-grid">
+    <div>
+      <div class="section-label">Intelligence</div>
+      <h2 class="section-title fade-up">We watch signals<br>you'd never track</h2>
+      <p class="section-sub fade-up">StockSense pulls from dozens of external data sources to predict demand before it happens.</p>
+      <div class="signal-list">
+        <div class="signal-item fade-up">
+          <div class="signal-icon">🌦️</div>
+          <div class="signal-text">
+            <h4>Local weather forecasts</h4>
+            <p>Rain coming? We know you'll need more umbrellas 3 days before your customers do.</p>
+          </div>
+        </div>
+        <div class="signal-item fade-up">
+          <div class="signal-icon">🎪</div>
+          <div class="signal-text">
+            <h4>Nearby events &amp; holidays</h4>
+            <p>Concerts, marathons, school breaks — all pull demand in predictable ways we can model.</p>
+          </div>
+        </div>
+        <div class="signal-item fade-up">
+          <div class="signal-icon">📅</div>
+          <div class="signal-text">
+            <h4>Day &amp; seasonal patterns</h4>
+            <p>Weekday vs weekend, January slumps vs December peaks — automatically baked in.</p>
+          </div>
+        </div>
+        <div class="signal-item fade-up">
+          <div class="signal-icon">🚚</div>
+          <div class="signal-text">
+            <h4>Supplier lead times</h4>
+            <p>We factor in how long each SKU takes to arrive so reorder alerts always fire on time.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mini-chart fade-up">
+      <div class="mini-chart-label">Demand forecast — Water Bottle 1L — Next 7 days</div>
+      <div class="chart-bars" id="chartBars"></div>
+      <div class="chart-legend">
+        <span><span class="legend-dot" style="background:rgba(102,153,255,0.6)"></span>Actual</span>
+        <span><span class="legend-dot" style="background:rgba(232,252,74,0.7)"></span>Forecast</span>
+      </div>
+      <div style="margin-top:1.2rem;padding:0.9rem;background:rgba(232,252,74,0.06);border:1px solid rgba(232,252,74,0.15);">
+        <div style="font-family:var(--mono);font-size:0.7rem;color:var(--accent);margin-bottom:0.4rem;">⚡ AI INSIGHT</div>
+        <div style="font-family:var(--mono);font-size:0.72rem;color:#ccc;">
+          Marathon on Sunday → demand spike +180%<br>
+          Recommend ordering 48 units by Thursday
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title fade-up">Common questions</h2>
+  <div class="faq-list fade-up">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>How does the 30-day free trial work?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>Connect your store, and StockSense starts learning immediately. You get full access to all Growth plan features for 30 days. No credit card required. After your trial you can choose a plan or we'll pause your account — no automatic charges ever.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>Which platforms do you integrate with?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>We support Shopify, WooCommerce, Square, BigCommerce, and Lightspeed out of the box. On the Pro plan you also get API access to connect any custom system.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>How accurate are the forecasts?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>Our models average 94.2% accuracy across all customers. Accuracy improves over the first 4–8 weeks as the model learns your specific patterns. We show you a confidence score on every forecast so you always know what to trust.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>Is my sales data secure?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>Yes. All data is encrypted at rest (AES-256) and in transit (TLS 1.3). We are SOC 2 Type II compliant and never sell or share your data. Each customer's data is isolated in its own encrypted partition.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>Can I cancel at any time?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>Yes. Cancel from your dashboard in under 30 seconds. No cancellation fees, no locked-in contracts. We'll even export all your forecast data so you keep it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div class="section-label">Pricing</div>
+  <h2 class="section-title fade-up">Simple, honest pricing</h2>
+  <p class="section-sub fade-up">If we don't save you more than you pay, cancel anytime. No questions asked.</p>
+
+  <div class="billing-toggle fade-up">
+    <span id="toggleMonthly" class="toggle-opt active" onclick="setBilling('monthly')">Monthly</span>
+    <div class="toggle-track" onclick="toggleBilling()">
+      <div class="toggle-thumb" id="toggleThumb"></div>
+    </div>
+    <span id="toggleAnnual" class="toggle-opt" onclick="setBilling('annual')">Annual <span class="save-badge">Save 20%</span></span>
+  </div>
+
+  <div class="pricing-grid fade-up">
+    <div class="pricing-card">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price"><sup>$</sup><span class="price-val" data-monthly="49" data-annual="39">49</span></div>
+      <div class="plan-period">per month</div>
+      <ul class="plan-features">
+        <li class="active">Up to 500 SKUs</li>
+        <li class="active">Shopify integration</li>
+        <li class="active">Weekly email reports</li>
+        <li class="active">Weather signals</li>
+        <li>Multi-channel sync</li>
+        <li>Custom lead times</li>
+      </ul>
+      <button class="btn-ghost" style="width:100%" onclick="openModal('trialModal','Starter')">Get started</button>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="featured-badge">Most popular</div>
+      <div class="plan-name">Growth</div>
+      <div class="plan-price"><sup>$</sup><span class="price-val" data-monthly="149" data-annual="119">149</span></div>
+      <div class="plan-period">per month</div>
+      <ul class="plan-features">
+        <li class="active">Up to 5,000 SKUs</li>
+        <li class="active">All integrations</li>
+        <li class="active">Daily reports + dashboard</li>
+        <li class="active">Weather + events signals</li>
+        <li class="active">Multi-channel sync</li>
+        <li class="active">Custom lead times per SKU</li>
+      </ul>
+      <button class="btn-primary" style="width:100%" onclick="openModal('trialModal','Growth')">Start free trial</button>
+    </div>
+
+    <div class="pricing-card">
+      <div class="plan-name">Pro</div>
+      <div class="plan-price"><sup>$</sup><span class="price-val" data-monthly="399" data-annual="319">399</span></div>
+      <div class="plan-period">per month</div>
+      <ul class="plan-features">
+        <li class="active">Unlimited SKUs</li>
+        <li class="active">All integrations + API</li>
+        <li class="active">Real-time dashboard</li>
+        <li class="active">All signals + custom data</li>
+        <li class="active">Multi-location support</li>
+        <li class="active">Dedicated onboarding</li>
+      </ul>
+      <button class="btn-ghost" style="width:100%" onclick="openModal('contactModal')">Contact sales</button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band">
+  <h2 class="fade-up">Stop guessing.<br>Start <em>knowing.</em></h2>
+  <p class="fade-up">Join 400+ retailers already saving thousands per month.</p>
+  <div class="email-form fade-up" id="ctaForm">
+    <input type="email" id="ctaEmail" placeholder="your@store.com" />
+    <button onclick="handleCTASubmit()">Get early access</button>
+  </div>
+  <div class="cta-note">30-day free trial · No credit card · Cancel anytime</div>
+  <div class="cta-success" id="ctaSuccess" style="display:none;">
+    ✅ You're on the list! Check your inbox for next steps.
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="logo" style="font-size:1rem;margin-bottom:0.5rem;"><a href="index.html">Stock<span>Sense</span></a></div>
+    <p style="font-size:0.72rem;color:var(--muted);font-family:var(--mono);">© 2025 StockSense AI · Built for retailers, by retailers.</p>
+  </div>
+  <div class="footer-links">
+    <a href="#how">How it works</a>
+    <a href="#signals">Signals</a>
+    <a href="#pricing">Pricing</a>
+    <a href="dashboard.html">Dashboard Demo</a>
+    <a href="#" onclick="openModal('contactModal');return false;">Contact</a>
+  </div>
+  <p style="color:rgba(255,255,255,0.2);font-family:var(--mono);font-size:0.72rem;">
+    <a href="#" style="color:inherit;text-decoration:none;">Privacy</a> · 
+    <a href="#" style="color:inherit;text-decoration:none;">Terms</a>
+  </p>
+</footer>
+
+<!-- TRIAL MODAL -->
+<div class="modal-overlay" id="trialModal" onclick="closeModalOutside(event,'trialModal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('trialModal')">✕</button>
+    <div class="modal-eyebrow">30-Day Free Trial</div>
+    <h2 class="modal-title">Let's get you set up</h2>
+    <p class="modal-sub" id="trialPlanNote">Full access to Growth plan features. No credit card needed.</p>
+    <div class="form-group">
+      <label>Store name</label>
+      <input type="text" id="trialStore" placeholder="My Awesome Store" />
+    </div>
+    <div class="form-group">
+      <label>Work email</label>
+      <input type="email" id="trialEmail" placeholder="you@store.com" />
+    </div>
+    <div class="form-group">
+      <label>Platform</label>
+      <select id="trialPlatform">
+        <option value="">Select your platform…</option>
+        <option>Shopify</option>
+        <option>WooCommerce</option>
+        <option>Square</option>
+        <option>BigCommerce</option>
+        <option>Lightspeed</option>
+        <option>Other / Custom</option>
+      </select>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:0.5rem" onclick="submitTrial()">
+      Start free trial →
+    </button>
+    <p class="form-note">By continuing you agree to our Terms of Service and Privacy Policy.</p>
+  </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div class="modal-overlay" id="contactModal" onclick="closeModalOutside(event,'contactModal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('contactModal')">✕</button>
+    <div class="modal-eyebrow">Pro Plan</div>
+    <h2 class="modal-title">Talk to our team</h2>
+    <p class="modal-sub">We'll set up a 30-min call to walk through your inventory challenges and tailor a solution.</p>
+    <div class="form-group">
+      <label>Your name</label>
+      <input type="text" id="contactName" placeholder="Jane Smith" />
+    </div>
+    <div class="form-group">
+      <label>Work email</label>
+      <input type="email" id="contactEmail" placeholder="jane@company.com" />
+    </div>
+    <div class="form-group">
+      <label>Message (optional)</label>
+      <textarea id="contactMsg" placeholder="Tell us about your store and what you need…" rows="3"></textarea>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:0.5rem" onclick="submitContact()">
+      Book a call →
+    </button>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="successModal" onclick="closeModalOutside(event,'successModal')">
+  <div class="modal" style="text-align:center;">
+    <div style="font-size:3rem;margin-bottom:1rem;">🎉</div>
+    <h2 class="modal-title" id="successTitle">You're in!</h2>
+    <p class="modal-sub" id="successMsg">Check your inbox — setup instructions are on their way.</p>
+    <button class="btn-primary" style="margin-top:1.5rem" onclick="closeModal('successModal')">Got it</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
